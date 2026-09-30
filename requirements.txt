@@ -1,0 +1,15 @@
+# Runtime dependencies (implementation.md §2.3 allowlist).
+# Do not add libraries outside this list without a human decision — in particular
+# no langchain / llama-index / langgraph, no second embedding model, no reranker.
+requests
+beautifulsoup4
+lxml
+trafilatura
+chromadb
+sentence-transformers
+openai
+streamlit
+python-dotenv
+numpy
+pandas
+pytest

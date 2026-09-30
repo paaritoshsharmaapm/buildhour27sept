@@ -1,0 +1,136 @@
+{
+  "run_id": "2026-09-30T10:23:01Z",
+  "force": true,
+  "model": {
+    "embed": "sentence-transformers/all-MiniLM-L6-v2",
+    "dim": 384,
+    "max_seq_length": 256
+  },
+  "chunking": {
+    "size_wp": 220,
+    "overlap_wp": 40,
+    "strategy": "heading_aware_recursive"
+  },
+  "collection": {
+    "name": "mf_faq_chunks",
+    "count_before": 0,
+    "count_after": 483
+  },
+  "sources": [
+    {
+      "source_id": "hdfc_large_cap_groww",
+      "status": "cached",
+      "http": 0,
+      "bytes": 453887,
+      "extracted_chars": 17664,
+      "chunks": 36,
+      "retrieved_at": "2026-09-29"
+    },
+    {
+      "source_id": "hdfc_flexi_cap_groww",
+      "status": "cached",
+      "http": 0,
+      "bytes": 494198,
+      "extracted_chars": 19518,
+      "chunks": 36,
+      "retrieved_at": "2026-09-29"
+    },
+    {
+      "source_id": "hdfc_elss_groww",
+      "status": "cached",
+      "http": 0,
+      "bytes": 452550,
+      "extracted_chars": 17849,
+      "chunks": 31,
+      "retrieved_at": "2026-09-29"
+    },
+    {
+      "source_id": "hdfc_small_cap_groww",
+      "status": "cached",
+      "http": 0,
+      "bytes": 496876,
+      "extracted_chars": 19831,
+      "chunks": 42,
+      "retrieved_at": "2026-09-29"
+    },
+    {
+      "source_id": "hdfc_balanced_groww",
+      "status": "cached",
+      "http": 0,
+      "bytes": 815651,
+      "extracted_chars": 43484,
+      "chunks": 88,
+      "retrieved_at": "2026-09-29"
+    },
+    {
+      "source_id": "hdfc_large_cap_scheme",
+      "status": "cached",
+      "http": 0,
+      "bytes": 167951,
+      "extracted_chars": 5472,
+      "chunks": 44,
+      "retrieved_at": "2026-09-29"
+    },
+    {
+      "source_id": "hdfc_flexi_cap_scheme",
+      "status": "cached",
+      "http": 0,
+      "bytes": 185460,
+      "extracted_chars": 7592,
+      "chunks": 56,
+      "retrieved_at": "2026-09-29"
+    },
+    {
+      "source_id": "hdfc_elss_scheme",
+      "status": "cached",
+      "http": 0,
+      "bytes": 169351,
+      "extracted_chars": 6093,
+      "chunks": 43,
+      "retrieved_at": "2026-09-29"
+    },
+    {
+      "source_id": "hdfc_small_cap_scheme",
+      "status": "cached",
+      "http": 0,
+      "bytes": 185579,
+      "extracted_chars": 7404,
+      "chunks": 55,
+      "retrieved_at": "2026-09-29"
+    },
+    {
+      "source_id": "hdfc_balanced_scheme",
+      "status": "cached",
+      "http": 0,
+      "bytes": 180746,
+      "extracted_chars": 6651,
+      "chunks": 49,
+      "retrieved_at": "2026-09-29"
+    },
+    {
+      "source_id": "hdfc_request_statement_guide",
+      "status": "cached",
+      "http": 0,
+      "bytes": 129908,
+      "extracted_chars": 2084,
+      "chunks": 3,
+      "retrieved_at": "2026-09-29"
+    }
+  ],
+  "warnings": [
+    "hdfc_large_cap_groww: collapsed 66 duplicate block(s) repeated by nested containers",
+    "hdfc_flexi_cap_groww: collapsed 64 duplicate block(s) repeated by nested containers",
+    "hdfc_elss_groww: collapsed 57 duplicate block(s) repeated by nested containers",
+    "hdfc_small_cap_groww: collapsed 64 duplicate block(s) repeated by nested containers",
+    "hdfc_balanced_groww: collapsed 148 duplicate block(s) repeated by nested containers",
+    "hdfc_large_cap_scheme: collapsed 69 duplicate block(s) repeated by nested containers",
+    "hdfc_flexi_cap_scheme: collapsed 83 duplicate block(s) repeated by nested containers",
+    "hdfc_elss_scheme: collapsed 59 duplicate block(s) repeated by nested containers",
+    "hdfc_small_cap_scheme: collapsed 82 duplicate block(s) repeated by nested containers",
+    "hdfc_balanced_scheme: collapsed 60 duplicate block(s) repeated by nested containers",
+    "hdfc_request_statement_guide: chrome removal dropped 4608 of 6695 chars (68%); verify nothing valuable was removed",
+    "hdfc_request_statement_guide: collapsed 19 duplicate block(s) repeated by nested containers",
+    "hdfc_request_statement_guide: truncated 7 blocks after footer boundary",
+    "hdfc_request_statement_guide: cleaned text is 1600 chars, below MIN_EXTRACTED_CHARS=2000; source may be a shell"
+  ]
+}

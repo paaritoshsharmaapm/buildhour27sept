@@ -1,0 +1,24 @@
+# Secrets — never commit (architecture.md §15, C8)
+.env
+.env.local
+
+# Virtual environments
+.venv/
+venv/
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Ingestion artifacts — rebuildable, and raw/ may contain third-party page content
+# that we do not want pinned (architecture.md §20, C2)
+chroma_db/
+data/raw/
+
+# OS noise
+.DS_Store
+
+# Scratch files
+Untitled

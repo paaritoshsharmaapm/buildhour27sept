@@ -1,0 +1,12 @@
+source_id,url,authority,scheme,scheme_category,doc_type,discover_only,enabled,retrieved_at,fetch_status,notes
+hdfc_large_cap_groww,https://groww.in/mutual-funds/hdfc-large-cap-fund-direct-growth,aggregator,HDFC Large Cap Fund,large_cap,scheme_page,true,true,,,Discovery only
+hdfc_flexi_cap_groww,https://groww.in/mutual-funds/hdfc-equity-fund-direct-growth,aggregator,HDFC Flexi Cap Fund,flexi_cap,scheme_page,true,true,,,Discovery only - PRD URL says hdfc-equity-fund which is the retired name
+hdfc_elss_groww,https://groww.in/mutual-funds/hdfc-elss-tax-saver-fund-direct-plan-growth,aggregator,HDFC ELSS Tax Saver Fund,elss,scheme_page,true,true,,,Discovery only - PRD URL omits 'plan' and returns 404
+hdfc_small_cap_groww,https://groww.in/mutual-funds/hdfc-small-cap-fund-direct-growth,aggregator,HDFC Small Cap Fund,small_cap,scheme_page,true,true,,,Discovery only
+hdfc_balanced_groww,https://groww.in/mutual-funds/hdfc-balanced-advantage-fund-direct-growth,aggregator,HDFC Balanced Advantage Fund,hybrid,scheme_page,true,true,,,Discovery only
+hdfc_large_cap_scheme,https://www.hdfcfund.com/explore/mutual-funds/hdfc-large-cap-fund/direct,official,HDFC Large Cap Fund,large_cap,scheme_page,false,true,,,Direct plan
+hdfc_flexi_cap_scheme,https://www.hdfcfund.com/explore/mutual-funds/hdfc-flexi-cap-fund/direct,official,HDFC Flexi Cap Fund,flexi_cap,scheme_page,false,true,,,Direct plan
+hdfc_elss_scheme,https://www.hdfcfund.com/explore/mutual-funds/hdfc-elss-tax-saver-fund/direct,official,HDFC ELSS Tax Saver Fund,elss,scheme_page,false,true,,,Direct plan - lock-in question answered from About section
+hdfc_small_cap_scheme,https://www.hdfcfund.com/explore/mutual-funds/hdfc-small-cap-fund/direct,official,HDFC Small Cap Fund,small_cap,scheme_page,false,true,,,Direct plan
+hdfc_balanced_scheme,https://www.hdfcfund.com/explore/mutual-funds/hdfc-balanced-advantage-fund/direct,official,HDFC Balanced Advantage Fund,hybrid,scheme_page,false,true,,,Direct plan
+hdfc_request_statement_guide,https://www.hdfcfund.com/services/additional-info/request-statement,official,HDFC Mutual Fund (Investor Services),general,guide,false,true,,,Capital gains statement instructions - contains a toll-free number that the P3 PII scrub must redact
