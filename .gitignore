@@ -12,10 +12,18 @@ __pycache__/
 .pytest_cache/
 .ipynb_checkpoints/
 
-# Ingestion artifacts — rebuildable, and raw/ may contain third-party page content
-# that we do not want pinned (architecture.md §20, C2)
+# The vector store is rebuilt by the deploy build, so never commit it.
 chroma_db/
-data/raw/
+
+# data/raw/ IS committed, deliberately and against the earlier decision.
+# Reason: hdfcfund.com returns 403 to automated clients, so a build machine
+# cannot fetch the corpus and `python -m src.ingest` would fail with every
+# source BLOCKED. Committing the snapshots is what makes an offline rebuild
+# possible. They are PII-scrubbed first via loaders.scrub_snapshots() (C2):
+# the committed HTML has account numbers, emails, phone numbers and OTPs
+# redacted. Note this pulls HDFC's page markup into the repo - if that is not
+# acceptable, drop data/raw/ from the index and instead commit a prebuilt
+# chroma_db/ instead of rebuilding on Render.
 
 # OS noise
 .DS_Store
