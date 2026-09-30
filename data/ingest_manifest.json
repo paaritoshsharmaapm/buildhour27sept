@@ -1,5 +1,5 @@
 {
-  "run_id": "2026-09-30T10:23:01Z",
+  "run_id": "2026-09-30T10:57:22Z",
   "force": true,
   "model": {
     "embed": "sentence-transformers/all-MiniLM-L6-v2",
@@ -21,100 +21,100 @@
       "source_id": "hdfc_large_cap_groww",
       "status": "cached",
       "http": 0,
-      "bytes": 453887,
+      "bytes": 454266,
       "extracted_chars": 17664,
       "chunks": 36,
-      "retrieved_at": "2026-09-29"
+      "retrieved_at": "2026-09-30"
     },
     {
       "source_id": "hdfc_flexi_cap_groww",
       "status": "cached",
       "http": 0,
-      "bytes": 494198,
+      "bytes": 494720,
       "extracted_chars": 19518,
       "chunks": 36,
-      "retrieved_at": "2026-09-29"
+      "retrieved_at": "2026-09-30"
     },
     {
       "source_id": "hdfc_elss_groww",
       "status": "cached",
       "http": 0,
-      "bytes": 452550,
+      "bytes": 452948,
       "extracted_chars": 17849,
       "chunks": 31,
-      "retrieved_at": "2026-09-29"
+      "retrieved_at": "2026-09-30"
     },
     {
       "source_id": "hdfc_small_cap_groww",
       "status": "cached",
       "http": 0,
-      "bytes": 496876,
+      "bytes": 497420,
       "extracted_chars": 19831,
       "chunks": 42,
-      "retrieved_at": "2026-09-29"
+      "retrieved_at": "2026-09-30"
     },
     {
       "source_id": "hdfc_balanced_groww",
       "status": "cached",
       "http": 0,
-      "bytes": 815651,
+      "bytes": 817890,
       "extracted_chars": 43484,
       "chunks": 88,
-      "retrieved_at": "2026-09-29"
+      "retrieved_at": "2026-09-30"
     },
     {
       "source_id": "hdfc_large_cap_scheme",
       "status": "cached",
       "http": 0,
-      "bytes": 167951,
+      "bytes": 167915,
       "extracted_chars": 5472,
       "chunks": 44,
-      "retrieved_at": "2026-09-29"
+      "retrieved_at": "2026-09-30"
     },
     {
       "source_id": "hdfc_flexi_cap_scheme",
       "status": "cached",
       "http": 0,
-      "bytes": 185460,
+      "bytes": 185425,
       "extracted_chars": 7592,
       "chunks": 56,
-      "retrieved_at": "2026-09-29"
+      "retrieved_at": "2026-09-30"
     },
     {
       "source_id": "hdfc_elss_scheme",
       "status": "cached",
       "http": 0,
-      "bytes": 169351,
+      "bytes": 169309,
       "extracted_chars": 6093,
       "chunks": 43,
-      "retrieved_at": "2026-09-29"
+      "retrieved_at": "2026-09-30"
     },
     {
       "source_id": "hdfc_small_cap_scheme",
       "status": "cached",
       "http": 0,
-      "bytes": 185579,
+      "bytes": 185551,
       "extracted_chars": 7404,
       "chunks": 55,
-      "retrieved_at": "2026-09-29"
+      "retrieved_at": "2026-09-30"
     },
     {
       "source_id": "hdfc_balanced_scheme",
       "status": "cached",
       "http": 0,
-      "bytes": 180746,
+      "bytes": 180718,
       "extracted_chars": 6651,
       "chunks": 49,
-      "retrieved_at": "2026-09-29"
+      "retrieved_at": "2026-09-30"
     },
     {
       "source_id": "hdfc_request_statement_guide",
       "status": "cached",
       "http": 0,
-      "bytes": 129908,
+      "bytes": 129883,
       "extracted_chars": 2084,
       "chunks": 3,
-      "retrieved_at": "2026-09-29"
+      "retrieved_at": "2026-09-30"
     }
   ],
   "warnings": [
@@ -128,7 +128,7 @@
     "hdfc_elss_scheme: collapsed 59 duplicate block(s) repeated by nested containers",
     "hdfc_small_cap_scheme: collapsed 82 duplicate block(s) repeated by nested containers",
     "hdfc_balanced_scheme: collapsed 60 duplicate block(s) repeated by nested containers",
-    "hdfc_request_statement_guide: chrome removal dropped 4608 of 6695 chars (68%); verify nothing valuable was removed",
+    "hdfc_request_statement_guide: chrome removal dropped 4599 of 6686 chars (68%); verify nothing valuable was removed",
     "hdfc_request_statement_guide: collapsed 19 duplicate block(s) repeated by nested containers",
     "hdfc_request_statement_guide: truncated 7 blocks after footer boundary",
     "hdfc_request_statement_guide: cleaned text is 1600 chars, below MIN_EXTRACTED_CHARS=2000; source may be a shell"
