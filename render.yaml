@@ -1,0 +1,57 @@
+# Render Blueprint for the HDFC MF FAQ assistant.
+# Docs: https://render.com/docs/blueprint-spec
+#
+# The vector store is NOT committed. It is rebuilt from the committed,
+# PII-scrubbed snapshots in data/raw/ on every build. That has to run offline
+# because hdfcfund.com returns 403 to automated clients, so a build machine
+# cannot fetch the corpus - ingest would find every source BLOCKED and produce
+# an empty store. See .gitignore and implementation.md §18c.
+
+services:
+  - type: web
+    name: hdfc-mf-faq
+    runtime: python
+    plan: standard          # ~2 GB RAM. Free (512 MB) and Starter (512 MB /
+                            # 1 GB disk) both OOM: torch alone is 339 MB and the
+                            # installed venv is ~1.3 GB.
+    region: oregon
+    branch: main
+    autoDeploy: false       # every build re-ingests and re-downloads MiniLM
+
+    # Repo root holds requirements.txt and app.py, so rootDir is ".".
+    rootDir: .
+
+    buildCommand: >-
+      pip install --no-cache-dir -r requirements.txt
+      && python -m src.ingest --force
+
+    startCommand: >-
+      streamlit run app.py
+      --server.address 0.0.0.0
+      --server.port $PORT
+      --server.headless true
+      --server.enableCORS false
+      --browser.gatherUsageStats false
+
+    healthCheckPath: /_stcore/health
+
+    envVars:
+      # sync: false means Render prompts for the value in the dashboard and
+      # stores it encrypted. Never inline a real key here - this file is
+      # committed.
+      - key: GROQ_API_KEY
+        sync: false
+
+      # Optional. Same value as src/config.py's default; set explicitly so a
+      # config change never silently changes the deployed model.
+      - key: GROQ_MODEL
+        value: qwen/qwen3.8-27b
+
+      # chromadb and torch both ship wheels for 3.11/3.12; pinning avoids
+      # picking up a Python release that torch has no wheel for yet.
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+
+      # Keeps Chroma quiet in Render's log tail.
+      - key: ANONYMIZED_TELEMETRY
+        value: "False"
