@@ -6,8 +6,11 @@
 
 Three things are measured, because they fail independently:
 
-  FACT     A known fact is in the top-k, from the right source. This is recall:
-           does the right text come back at all?
+  FACT     A known fact is in the top-k, from the right source, AND inside the
+           CONTEXT_TOP_K actually sent to the model. Both halves matter. Being in
+           the top-k is not enough: a needle at rank 4 with CONTEXT_TOP_K=3 never
+           reaches the model, so it replies that it does not have the fact and the
+           turn is downgraded to NO_GROUNDING, with a citation on screen.
   ISOLATE  Every hit comes from the scheme the question named. This catches
            cross-scheme contamination, which recall alone cannot see -- a query
            can return five confident chunks from the wrong fund and score 5/5.
@@ -86,8 +89,15 @@ def check_facts(verbose: bool) -> tuple:
         result = retrieve(question)
         hit = next((h for h in result.hits if needle in h.text), None)
         right_source = hit is not None and hit.metadata["source_id"] == source_id
+        # Rank among the hits actually sent to the model. A needle that is in
+        # TOP_K but outside CONTEXT_TOP_K is invisible to the model: it gets
+        # asked a question with no supporting context, replies that it does not
+        # have the fact, and the turn is downgraded to NO_GROUNDING while the
+        # debug trace still shows a citation. That is a user-visible failure
+        # that a top-K check alone reports as a pass.
+        seen = [h for h in result.hits[:CONFIG.CONTEXT_TOP_K] if needle in h.text]
         rows.append({
-            "q": question, "pass": hit is not None and right_source,
+            "q": question, "pass": hit is not None and right_source and bool(seen),
             "score": result.max_score, "top1": result.hits[0].metadata["source_id"] if result.hits else "-",
             "src_ok": right_source, "note": note,
             "why": pool_rank(question, needle) if verbose else "",
@@ -142,7 +152,7 @@ def main() -> int:
                   f"{row['note']:<5} {row['q'][:52]}{why}")
         passed = sum(r["pass"] for r in rows)
         failures += len(rows) - passed
-        print(f"   -> {passed}/{len(rows)} = {100*passed/len(rows):.0f}% recall@{CONFIG.TOP_K}\n")
+        print(f"   -> {passed}/{len(rows)} = {100*passed/len(rows):.0f}% recall@{CONFIG.TOP_K} and visible to the model (CONTEXT_TOP_K={CONFIG.CONTEXT_TOP_K})\n")
 
     if args.only in (None, "isolate"):
         rows = check_isolation()

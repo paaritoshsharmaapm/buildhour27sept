@@ -1,5 +1,5 @@
 {
-  "run_id": "2026-09-30T10:57:22Z",
+  "run_id": "2026-09-30T13:10:04Z",
   "force": true,
   "model": {
     "embed": "sentence-transformers/all-MiniLM-L6-v2",
@@ -14,7 +14,7 @@
   "collection": {
     "name": "mf_faq_chunks",
     "count_before": 0,
-    "count_after": 483
+    "count_after": 414
   },
   "sources": [
     {
@@ -23,7 +23,7 @@
       "http": 0,
       "bytes": 454266,
       "extracted_chars": 17664,
-      "chunks": 36,
+      "chunks": 35,
       "retrieved_at": "2026-09-30"
     },
     {
@@ -32,7 +32,7 @@
       "http": 0,
       "bytes": 494720,
       "extracted_chars": 19518,
-      "chunks": 36,
+      "chunks": 35,
       "retrieved_at": "2026-09-30"
     },
     {
@@ -41,7 +41,7 @@
       "http": 0,
       "bytes": 452948,
       "extracted_chars": 17849,
-      "chunks": 31,
+      "chunks": 30,
       "retrieved_at": "2026-09-30"
     },
     {
@@ -68,7 +68,7 @@
       "http": 0,
       "bytes": 167915,
       "extracted_chars": 5472,
-      "chunks": 44,
+      "chunks": 32,
       "retrieved_at": "2026-09-30"
     },
     {
@@ -77,7 +77,7 @@
       "http": 0,
       "bytes": 185425,
       "extracted_chars": 7592,
-      "chunks": 56,
+      "chunks": 43,
       "retrieved_at": "2026-09-30"
     },
     {
@@ -86,7 +86,7 @@
       "http": 0,
       "bytes": 169309,
       "extracted_chars": 6093,
-      "chunks": 43,
+      "chunks": 30,
       "retrieved_at": "2026-09-30"
     },
     {
@@ -95,7 +95,7 @@
       "http": 0,
       "bytes": 185551,
       "extracted_chars": 7404,
-      "chunks": 55,
+      "chunks": 42,
       "retrieved_at": "2026-09-30"
     },
     {
@@ -104,7 +104,7 @@
       "http": 0,
       "bytes": 180718,
       "extracted_chars": 6651,
-      "chunks": 49,
+      "chunks": 34,
       "retrieved_at": "2026-09-30"
     },
     {

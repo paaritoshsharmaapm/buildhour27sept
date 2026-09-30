@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import hashlib
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from src.cleaner import Block, CleanDoc
 from src.config import CONFIG
@@ -45,6 +45,19 @@ class ChunkInvariantError(RuntimeError):
     """Raised when a chunk set violates S3. Never swallowed by callers."""
 
 
+# A buffer carrying less than this many non-heading words is treated as a bare
+# label, not a chunk. Measured, not assumed: flushing at a metric label produced
+# 70 such buffers out of 483 chunks, and because they consist of exactly the
+# query's tokens and nothing to dilute them they scored HIGHEST of anything
+# retrieved - "TER" alone was the top hit for "TER of HDFC Large Cap", while the
+# chunk holding "TER: 1.03" sat at rank 21. ~20 of them were the empty string,
+# i.e. citable as a source with no content at all.
+MIN_STANDALONE_WP = 8
+
+# Terminal punctuation, used to tell a bare nav label from a real sentence.
+_SENTENCE_END = re.compile(r"[.!?]\s*$")
+
+
 @dataclass(frozen=True)
 class Chunk:
     chunk_id: str
@@ -69,6 +82,30 @@ class Chunk:
 
 def _word_count(text: str) -> int:
     return len(text.split())
+
+
+def _has_atomic(lines: list) -> bool:
+    """Atomic rows and facts must stand alone; never fold them into a neighbour."""
+    return any(kind in ATOMIC_KINDS for _text, kind, *_rest in lines)
+
+
+def _is_bare_label(lines: list) -> bool:
+    """True when a buffer is heading/labels/boilerplate with no real content.
+
+    Sentence punctuation is the discriminator, not raw length: the nav stubs
+    that need folding ("TER", "Min SIP \u20b9100", "No data available") carry no
+    terminal punctuation, while real prose of the same length ("Ongoing charges
+    0.52% of NAV.") does. A length-only threshold merged genuine sentences and
+    collapsed two sections into one chunk.
+    """
+    if _has_atomic(lines):
+        return False
+    body = [t for t, kind, *_ in lines if kind != "heading"]
+    if not body:
+        return True
+    if any(_SENTENCE_END.search(t) for t in body):
+        return False
+    return sum(_word_count(t) for t in body) < MIN_STANDALONE_WP
 
 
 def chunk_id_for(source_id: str, chunk_index: int, text: str) -> str:
@@ -203,25 +240,34 @@ def chunk_document(doc: CleanDoc, row: SourceRow, cfg=CONFIG) -> list:
 
     chunks: list = []
     buffer: list = []
+    pending: list = []
     section = ""
     section_line = ""
     faq_question = ""
 
     def flush() -> None:
-        nonlocal buffer, faq_question
+        nonlocal buffer, faq_question, pending
         if buffer:
-            chunks.append(
-                _emit(
-                    buffer,
-                    section_line,
-                    section,
-                    faq_question,
-                    row,
-                    cfg,
-                    len(chunks),
-                    doc.retrieved_at,
+            if _is_bare_label(buffer):
+                # Hold it. The next substantive chunk in this section carries
+                # the figure this label introduces ("TER" -> "TER: 1.03"), so
+                # folding them together keeps the label glued to its own value
+                # instead of leaving it retrievable on its own.
+                pending = pending + buffer
+            else:
+                chunks.append(
+                    _emit(
+                        pending + buffer,
+                        section_line,
+                        section,
+                        faq_question,
+                        row,
+                        cfg,
+                        len(chunks),
+                        doc.retrieved_at,
+                    )
                 )
-            )
+                pending = []
         buffer = []
         faq_question = ""
 
@@ -256,6 +302,32 @@ def chunk_document(doc: CleanDoc, row: SourceRow, cfg=CONFIG) -> list:
         buffer.append((text, kind, level, start, end))
 
     flush()
+    if pending:
+        # Trailing bare labels at end of document. Appending them to the last
+        # chunk keeps the text (coverage is verbatim) without re-creating a
+        # standalone label chunk that would out-rank real content.
+        tail_text = "\n".join(t for t, *_ in pending)
+        if chunks:
+            last = chunks[-1]
+            chunks[-1] = replace(
+                last,
+                text=f"{last.text}\n{tail_text}",
+                token_count=_word_count(f"{last.text} {tail_text}"),
+                char_end=pending[-1][4],
+            )
+        else:
+            chunks.append(
+                _emit(
+                    pending,
+                    section_line,
+                    section,
+                    faq_question,
+                    row,
+                    cfg,
+                    0,
+                    doc.retrieved_at,
+                )
+            )
     return chunks
 
 

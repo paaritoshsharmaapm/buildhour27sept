@@ -77,12 +77,22 @@ class Config:
     # (architecture.md ADR-06).
     RETRIEVE_POOL: int = 20
     MMR_LAMBDA: float = 0.7
-    # Hits handed to the LLM, out of the TOP_K retrieved. 3 of 5 measured at
-    # 565 vs 838 prompt tokens, which is the difference between fitting inside
-    # the free-tier token-per-minute budget and getting a 429. Retrieval still
-    # returns TOP_K, so citation support and the debug trace are unaffected;
-    # only the prompt shrinks (P17, human decision).
-    CONTEXT_TOP_K: int = 3
+    # Hits handed to the LLM, out of the TOP_K retrieved.
+    #
+    # Was 3, chosen to fit the free-tier token-per-minute budget: 565 vs 838
+    # prompt tokens. That reasoning was valid then and is now void, because the
+    # same 838-token prompt was three ~1,400-character mega-chunks. Folding away
+    # the bare metric-label chunks (src/chunker.py, MIN_STANDALONE_WP) made the
+    # chunks small, so 5 of them cost only 330 words / ~440 tokens.
+    #
+    # 3 was not harmless in the meantime: "What is the exit load of HDFC ELSS Tax
+    # Saver Fund?" puts "## Exit Load NIL" at rank 4, so the model was shown three
+    # chunks with no exit-load content, replied that it did not have the fact,
+    # and the question was downgraded to NO_GROUNDING with a citation on screen.
+    # eval/recall_check.py did not catch it because it scores the top-5 pool
+    # rather than the CONTEXT_TOP_K actually sent to the model. Retrieval still
+    # returns TOP_K either way, so this changes only what the model can see.
+    CONTEXT_TOP_K: int = 5
     # Calibrated 2026-09-30 from eval/run_eval.py --sweep over 25 golden cases.
     # in-corpus recall 1.00, out-of-corpus gated 0.00 - the gate never fires
     # because MiniLM cosine similarity between any financial question and any

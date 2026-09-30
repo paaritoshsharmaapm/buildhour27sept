@@ -15,15 +15,40 @@ instead of answering from an empty collection, which would otherwise look like
 from __future__ import annotations
 
 from dataclasses import dataclass
-from functools import lru_cache
+from functools import lru_cache, wraps
 
 import chromadb
+from chromadb.errors import NotFoundError
 
 from src.chunker import Chunk
 from src.config import CONFIG
 
 _client = None
 _collection = None
+
+
+def _reopen_if_stale(fn):
+    """Reopen the collection once if the cached handle no longer resolves.
+
+    A long-lived process (the Streamlit app, an interactive CLI session) caches
+    the collection handle in `_collection`. If a rebuild drops and recreates the
+    collection while that process is alive, the cached handle points at a
+    deleted collection and every subsequent query raises NotFoundError - the app
+    showed "Something went wrong handling that question (NotFoundError)" for
+    every question, including ones with a perfect chunk waiting. Reopening once
+    recovers transparently, and costs nothing in the steady state because the
+    happy path is untouched.
+    """
+
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        try:
+            return fn(*args, **kwargs)
+        except NotFoundError:
+            reset_caches()
+            return fn(*args, **kwargs)
+
+    return wrapper
 
 
 class StoreMissing(RuntimeError):
@@ -105,6 +130,7 @@ class Hit:
     embedding: list | None = None
 
 
+@_reopen_if_stale
 def count() -> int:
     return get_collection().count()
 
@@ -121,6 +147,7 @@ def drop_collection() -> None:
     get_collection()
 
 
+@_reopen_if_stale
 def upsert_chunks(chunks: list, vectors, *, force: bool = False) -> int:
     """Idempotent by chunk_id (ADR-09): re-running leaves count() unchanged."""
     if not chunks:
@@ -144,6 +171,7 @@ def upsert_chunks(chunks: list, vectors, *, force: bool = False) -> int:
     return actual
 
 
+@_reopen_if_stale
 def query_store(qvec, *, where: dict | None = None, n_results: int = 8) -> list:
     """Nearest-neighbour search. Returns Hit objects with score and embedding."""
     collection = get_collection()
