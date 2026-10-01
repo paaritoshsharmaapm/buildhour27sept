@@ -12,21 +12,64 @@ UI's job is to show the status the pipeline returned and never to soften it.
 
 from __future__ import annotations
 
+import subprocess
+import sys
+
 import streamlit as st
 
+import src.store as store
 from src.config import CONFIG
 from src.pipeline import answer
 
 st.set_page_config(page_title="Mutual Fund FAQ Assistant", layout="centered")
 
+
+@st.cache_resource(
+    show_spinner="Building the chunk store. First run only - this takes a minute."
+)
+def bootstrap_store():
+    """Open the chunk store, ingesting once if the clone arrived without one.
+
+    Streamlit Community Cloud clones the repo without chroma_db (it is
+    gitignored) and offers no build command, so ingest has to happen here rather
+    than ahead of the app. Opening the store first keeps the local and Render
+    paths untouched: both already have a populated collection and return
+    immediately.
+
+    Two independent guards, both required. cache_resource holds this to once per
+    process, because module-level code re-executes on every Streamlit rerun and
+    unguarded this would re-ingest on every keystroke. The count check keeps it
+    idempotent if the process restarts and the store is absent or empty.
+
+    No --force. That drops and recreates the collection, which is exactly the
+    stale-handle condition that surfaced as "Something went wrong handling that
+    question (NotFoundError)". Without it ingest upserts by chunk_id and leaves
+    the collection in place (ADR-09).
+    """
+    if store.count() == 0:
+        try:
+            subprocess.run(
+                [sys.executable, "-m", "src.ingest"],
+                check=True,
+                cwd=CONFIG.ROOT,
+            )
+        except subprocess.CalledProcessError as error:
+            raise store.StoreMissing(
+                f"Automatic ingest failed with exit code {error.returncode}. "
+                "Build the store manually:"
+            ) from error
+        # The child process populated the collection; drop this process's cached
+        # client and handle, otherwise the vectors it wrote are not visible here.
+        store.reset_caches()
+    return store.get_collection()
+
+
 # Absorb the MiniLM and Chroma warm-up into the startup screen rather than the
 # first question, so the first turn is not noticeably slower than the second.
 try:
-    from src.store import StoreMissing, get_collection
-
-    get_collection()
-except StoreMissing:
-    st.error("The chunk store is missing or empty. Build it first:")
+    bootstrap_store()
+except store.StoreMissing as error:
+    st.error(str(error) or "The chunk store is missing or empty. Build it first:")
     st.code("python -m src.ingest", language="bash")
     st.stop()
 except Exception as error:
